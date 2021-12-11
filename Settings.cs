@@ -1,4 +1,5 @@
 ﻿using ModSettings;
+using static CustomExperienceModeManager;
 
 namespace RefillingContainers
 {
@@ -11,14 +12,11 @@ namespace RefillingContainers
 
         [Name("Reduce empty container chance")]
         [Description("Reduces the chance of refilled containers being empty.")]
-        [Slider(0, 100)]
-        public int chanceEmptyModifier = 0;
+        public CustomTunableNLMHV chanceEmptyModifier = CustomTunableNLMHV.None;
 
         [Name("Container density modifier")]
         [Description("Modifies the amount of items you find in refilled containers.")]
-        [Slider(0, 100)]
-        public int containerDensityModifier = 50;
-
+        public CustomTunableLMH containerDensityModifier = CustomTunableLMH.High;
     }
 
     internal class Settings
