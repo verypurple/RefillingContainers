@@ -19,8 +19,8 @@ namespace RefillingContainers
         public int refillAfterDays = 60;
 
         [Name("Empty container chance")]
-        [Description("The chance of refilled containers being empty.")]
-        public CustomTunableNLMH chanceEmptyModifier = CustomTunableNLMH.Medium;
+        [Description("The chance of refilled containers being empty. If set to None there is still a small chance some containers will be empty.")]
+        public CustomTunableNLMH chanceEmptyModifier = CustomTunableNLMH.Low;
 
         [Name("Container density modifier")]
         [Description("Modifies the amount of items you find in refilled containers.")]

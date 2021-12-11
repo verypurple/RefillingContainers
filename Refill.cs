@@ -16,13 +16,24 @@ namespace RefillingContainers
 
         public Refill(IntPtr intPtr) : base(intPtr) { }
 
-        public void Update()
+        void Start()
         {
-            if (!Settings.options.modEnabled)
-            {
-                return;
-            }
+            RefillManager.Subscribe(this);
+        }
 
+        void OnDestroy()
+        {
+            RefillManager.Unsubscribe(this);
+        }
+
+        [HideFromIl2Cpp]
+        public bool CanRefill()
+        {
+            return m_Container.IsInspected() && m_Container.IsEmpty();
+        }
+
+        public void DoRefill()
+        {
             var currentDay = GameManager.m_TimeOfDay.GetDayNumber();
 
             if (currentDay >= m_DaySearched + Settings.options.refillAfterDays)
@@ -34,7 +45,6 @@ namespace RefillingContainers
                 int empty = rand.Next(0, 100);
                 if (empty < GetEmptyChanceModifier(m_Container.m_ChanceEmpty))
                 {
-                    enabled = false;
                     return;
                 }
 
@@ -47,41 +57,15 @@ namespace RefillingContainers
                     var prefab = m_Container.m_LootTablePrefab.GetRandomGearPrefab();
                     m_Container.m_GearToInstantiate.Add(prefab.name);
                 }
-
-                enabled = false;
             }
-        }
-
-        public void OnOpened()
-        {
-            var anim = gameObject.GetComponent<ObjectAnim>();
-
-            if (anim && anim.IsAnimating())
-            {
-                return;
-            }
-
-            enabled = false;
-        }
-
-        public void OnClosed()
-        {
-            if (m_Container.IsEmpty())
-            {
-                UpdateDaySearched();
-            }
-
-            MaybeEnable();
-        }
-
-        public void MaybeEnable()
-        {
-            enabled = m_Container.IsInspected() && m_Container.IsEmpty();
         }
 
         public void UpdateDaySearched()
         {
-            m_DaySearched = GameManager.m_TimeOfDay.GetDayNumber();
+            if (m_Container.IsEmpty())
+            {
+                m_DaySearched = GameManager.m_TimeOfDay.GetDayNumber();
+            }
         }
 
         [HideFromIl2Cpp]
@@ -100,7 +84,7 @@ namespace RefillingContainers
                 case CustomTunableNLMH.High:
                     return chanceEmpty + diff * 0.6f;
                 default:
-                    throw new ArgumentException();
+                    throw new Exception();
             }
         }
 
@@ -116,7 +100,7 @@ namespace RefillingContainers
                 case CustomTunableLMH.High:
                     return 1f;
                 default:
-                    throw new ArgumentException();
+                    throw new Exception();
             }
         }
     }

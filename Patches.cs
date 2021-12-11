@@ -15,16 +15,6 @@ namespace RefillingContainers
             {
                 var refill = __instance.gameObject.AddComponent<Refill>();
                 refill.m_Container = __instance;
-                refill.enabled = false;
-            }
-        }
-
-        [HarmonyPatch(typeof(Container), "Open")]
-        internal static class Container_Open
-        {
-            internal static void Prefix(Container __instance)
-            {
-                __instance.GetComponent<Refill>().OnOpened();
             }
         }
 
@@ -33,7 +23,7 @@ namespace RefillingContainers
         {
             internal static void Postfix(Container __instance)
             {
-                __instance.GetComponent<Refill>().OnClosed();
+                __instance.GetComponent<Refill>().UpdateDaySearched();
             }
         }
 
@@ -57,7 +47,6 @@ namespace RefillingContainers
             internal static void Postfix(Container __instance, string text, List<GearItem> loadedItems)
             {
                 var refill = __instance.GetComponent<Refill>();
-                refill.MaybeEnable();
 
                 var jo = JObject.Parse(text);
 
@@ -69,6 +58,15 @@ namespace RefillingContainers
                 {
                     refill.UpdateDaySearched();
                 }
+            }
+        }
+
+        [HarmonyPatch(typeof(TimeOfDay), "DoEndOfDayAnalytics")]
+        internal static class TimeOfDay_DoEndOfDayAnalytics
+        {
+            internal static void Postfix(Container __instance)
+            {
+                RefillManager.NotifySubscribers();
             }
         }
     }
