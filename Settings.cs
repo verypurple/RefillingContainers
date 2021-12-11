@@ -14,10 +14,10 @@ namespace RefillingContainers
         [Slider(0, 100)]
         public int chanceEmptyModifier = 0;
 
-        [Name("Container density")]
-        [Description("Amount of items you find in refilled containers.")]
+        [Name("Container density modifier")]
+        [Description("Modifies the amount of items you find in refilled containers.")]
         [Slider(0, 100)]
-        public float containerDensityModifier = 50;
+        public int containerDensityModifier = 50;
 
     }
 

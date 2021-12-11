@@ -44,13 +44,10 @@ namespace RefillingContainers
             {
                 var refill = __instance.GetComponent<Refill>();
 
-                if (refill)
-                {
-                    var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(__result);
-                    dict[nameof(Refill.m_DaySearched)] = refill.m_DaySearched;
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(__result);
+                dict[nameof(Refill.m_DaySearched)] = refill.m_DaySearched;
 
-                    __result = JsonConvert.SerializeObject(dict);
-                }
+                __result = JsonConvert.SerializeObject(dict);
             }
         }
 
