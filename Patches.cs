@@ -24,7 +24,7 @@ namespace RefillingContainers
         {
             internal static void Prefix(Container __instance)
             {
-                __instance.GetComponent<Refill>()?.OnOpened();
+                __instance.GetComponent<Refill>().OnOpened();
             }
         }
 
@@ -33,7 +33,7 @@ namespace RefillingContainers
         {
             internal static void Postfix(Container __instance)
             {
-                __instance.GetComponent<Refill>()?.OnClosed();
+                __instance.GetComponent<Refill>().OnClosed();
             }
         }
 

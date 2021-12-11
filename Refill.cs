@@ -12,12 +12,17 @@ namespace RefillingContainers
         public Container m_Container;
         public int m_DaySearched;
 
-        private System.Random rand = new System.Random();
+        private static System.Random rand = new System.Random();
 
         public Refill(IntPtr intPtr) : base(intPtr) { }
 
         public void Update()
         {
+            if (!Settings.options.modEnabled)
+            {
+                return;
+            }
+
             var currentDay = GameManager.m_TimeOfDay.GetDayNumber();
 
             if (currentDay >= m_DaySearched + Settings.options.refillAfterDays)
@@ -27,7 +32,7 @@ namespace RefillingContainers
                 m_Container.m_GearToInstantiate.Clear();
 
                 int empty = rand.Next(0, 100);
-                if (empty < m_Container.m_ChanceEmpty * GetEmptyChanceModifier())
+                if (empty < GetEmptyChanceModifier(m_Container.m_ChanceEmpty))
                 {
                     enabled = false;
                     return;
@@ -66,7 +71,7 @@ namespace RefillingContainers
                 UpdateDaySearched();
             }
 
-            enabled = m_Container.IsEmpty();
+            MaybeEnable();
         }
 
         public void MaybeEnable()
@@ -80,9 +85,23 @@ namespace RefillingContainers
         }
 
         [HideFromIl2Cpp]
-        private float GetEmptyChanceModifier()
+        private float GetEmptyChanceModifier(float chanceEmpty)
         {
-            return 1 - (int)Settings.options.chanceEmptyModifier * 0.25f;
+            var diff = 100f - chanceEmpty;
+
+            switch (Settings.options.chanceEmptyModifier)
+            {
+                case CustomTunableNLMH.None:
+                    return 0f;
+                case CustomTunableNLMH.Low:
+                    return chanceEmpty;
+                case CustomTunableNLMH.Medium:
+                    return chanceEmpty + diff * 0.3f;
+                case CustomTunableNLMH.High:
+                    return chanceEmpty + diff * 0.6f;
+                default:
+                    throw new ArgumentException();
+            }
         }
 
         [HideFromIl2Cpp]

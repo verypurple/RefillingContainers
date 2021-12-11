@@ -5,14 +5,22 @@ namespace RefillingContainers
 {
     internal class RefillingContainersSettings : JsonModSettings
     {
+        [Section("General")]
+
+        [Name("Mod enabled")]
+        [Description("Please use this setting to temporarily turn off the mod. If you delete the file your progress will be lost.")]
+        public bool modEnabled = true;
+
+        [Section("Containers")]
+
         [Name("Days to refill")]
         [Description("Number of days after which searched or emptied containers will refill with random items.")]
         [Slider(1, 500)]
         public int refillAfterDays = 60;
 
-        [Name("Reduce empty container chance")]
-        [Description("Reduces the chance of refilled containers being empty.")]
-        public CustomTunableNLMHV chanceEmptyModifier = CustomTunableNLMHV.None;
+        [Name("Empty container chance")]
+        [Description("The chance of refilled containers being empty.")]
+        public CustomTunableNLMH chanceEmptyModifier = CustomTunableNLMH.Medium;
 
         [Name("Container density modifier")]
         [Description("Modifies the amount of items you find in refilled containers.")]
