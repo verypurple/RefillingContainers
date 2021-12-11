@@ -33,7 +33,7 @@ namespace RefillingContainers
 
                 float max = Mathf.Max(0, m_Container.m_MaxRandomItems) * Settings.options.containerDensityModifier / 100;
                 float min = Mathf.Min(m_Container.m_MinRandomItems, max);
-                int count = rand.Next((int)Mathf.Round(min), (int)Mathf.Round(max));
+                int count = rand.Next((int)Mathf.Round(min), (int)Mathf.Round(max) + 1);
 
                 for (var i = 0; i < count; i++)
                 {
