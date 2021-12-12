@@ -1,36 +1,35 @@
-﻿using MelonLoader;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace RefillingContainers
 {
     internal static class RefillManager
     {
-        private static List<Refill> subscribers = new List<Refill>();
+        private static List<Refill> handlers = new List<Refill>();
 
         internal static void Register(Refill refill)
         {
             if (refill.m_Container.m_LootTablePrefab)
             {
-                subscribers.Add(refill);
+                handlers.Add(refill);
                 refill.DoRefill();
             }
         }
 
         internal static void Unregister(Refill refill)
         {
-            subscribers.Remove(refill);
+            handlers.Remove(refill);
         }
 
-        internal static void NotifySubscribers()
+        internal static void RefillAll()
         {
             if (!Settings.options.modEnabled)
             {
                 return;
             }
 
-            foreach (var subscriber in subscribers)
+            foreach (var handler in handlers)
             {
-                subscriber.DoRefill();
+                handler.DoRefill();
             }
         }
     }

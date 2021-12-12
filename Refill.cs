@@ -17,6 +17,16 @@ namespace RefillingContainers
 
         public Refill(IntPtr intPtr) : base(intPtr) { }
 
+        void Start()
+        {
+            RefillManager.Register(this);
+        }
+
+        void OnDestroy()
+        {
+            RefillManager.Unregister(this);
+        }
+
         internal void OnOpen()
         {
             m_WasEmpty = m_Container.IsEmpty();
@@ -51,7 +61,7 @@ namespace RefillingContainers
                 m_Container.m_GearToInstantiate.Clear();
 
                 int empty = rand.Next(0, 100);
-                if (empty < GetEmptyChanceModifier(m_Container.m_ChanceEmpty))
+                if (empty < GetChanceEmptyModifier(m_Container.m_ChanceEmpty))
                 {
                     return;
                 }
@@ -73,7 +83,7 @@ namespace RefillingContainers
         }
 
         [HideFromIl2Cpp]
-        private float GetEmptyChanceModifier(float chanceEmpty)
+        private float GetChanceEmptyModifier(float chanceEmpty)
         {
             var diff = 100f - chanceEmpty;
 

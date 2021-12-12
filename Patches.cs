@@ -42,7 +42,6 @@ namespace RefillingContainers
             internal static void Postfix(Container __instance, ref string __result)
             {
                 var refill = __instance.GetComponent<Refill>();
-                RefillManager.Unregister(refill);
 
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(__result);
                 dict[nameof(Refill.m_DaySearched)] = refill.m_DaySearched;
@@ -68,8 +67,6 @@ namespace RefillingContainers
                 {
                     refill.UpdateDaySearched();
                 }
-
-                RefillManager.Register(refill);
             }
         }
 
@@ -78,7 +75,7 @@ namespace RefillingContainers
         {
             internal static void Postfix(TimeOfDay __instance)
             {
-                RefillManager.NotifySubscribers();
+                RefillManager.RefillAll();
             }
         }
     }
