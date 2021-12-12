@@ -29,7 +29,7 @@ namespace RefillingContainers
 
         internal void OnOpen()
         {
-            m_WasEmpty = m_Container.IsEmpty();
+            m_WasEmpty = m_Container.IsInspected() && m_Container.IsEmpty();
         }
 
         internal void OnClose()
