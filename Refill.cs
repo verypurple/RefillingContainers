@@ -13,27 +13,35 @@ namespace RefillingContainers
         public int m_DaySearched;
 
         private static System.Random rand = new System.Random();
+        private bool m_WasEmpty;
 
         public Refill(IntPtr intPtr) : base(intPtr) { }
 
-        void Start()
+        internal void OnOpen()
         {
-            RefillManager.Subscribe(this);
+            m_WasEmpty = m_Container.IsEmpty();
         }
 
-        void OnDestroy()
+        internal void OnClose()
         {
-            RefillManager.Unsubscribe(this);
+            if (!m_WasEmpty && m_Container.IsEmpty())
+            {
+                UpdateDaySearched();
+            }
         }
 
-        [HideFromIl2Cpp]
-        public bool CanRefill()
+        internal void UpdateDaySearched()
         {
-            return m_Container.IsInspected() && m_Container.IsEmpty();
+            m_DaySearched = GameManager.m_TimeOfDay.GetDayNumber();
         }
 
-        public void DoRefill()
+        internal void DoRefill()
         {
+            if (!m_Container.IsInspected() || !m_Container.IsEmpty())
+            {
+                return;
+            }
+
             var currentDay = GameManager.m_TimeOfDay.GetDayNumber();
 
             if (currentDay >= m_DaySearched + Settings.options.refillAfterDays)
@@ -55,16 +63,12 @@ namespace RefillingContainers
                 for (var i = 0; i < count; i++)
                 {
                     var prefab = m_Container.m_LootTablePrefab.GetRandomGearPrefab();
-                    m_Container.m_GearToInstantiate.Add(prefab.name);
-                }
-            }
-        }
 
-        public void UpdateDaySearched()
-        {
-            if (m_Container.IsEmpty())
-            {
-                m_DaySearched = GameManager.m_TimeOfDay.GetDayNumber();
+                    if (prefab)
+                    {
+                        m_Container.m_GearToInstantiate.Add(prefab.name);
+                    }
+                }
             }
         }
 

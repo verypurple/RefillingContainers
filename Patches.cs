@@ -18,12 +18,21 @@ namespace RefillingContainers
             }
         }
 
+        [HarmonyPatch(typeof(Container), "Open")]
+        internal static class Container_Open
+        {
+            internal static void Prefix(Container __instance)
+            {
+                __instance.GetComponent<Refill>().OnOpen();
+            }
+        }
+
         [HarmonyPatch(typeof(Container), "Close")]
         internal static class Container_Close
         {
             internal static void Postfix(Container __instance)
             {
-                __instance.GetComponent<Refill>().UpdateDaySearched();
+                __instance.GetComponent<Refill>().OnClose();
             }
         }
 
@@ -33,6 +42,7 @@ namespace RefillingContainers
             internal static void Postfix(Container __instance, ref string __result)
             {
                 var refill = __instance.GetComponent<Refill>();
+                RefillManager.Unregister(refill);
 
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(__result);
                 dict[nameof(Refill.m_DaySearched)] = refill.m_DaySearched;
@@ -58,13 +68,15 @@ namespace RefillingContainers
                 {
                     refill.UpdateDaySearched();
                 }
+
+                RefillManager.Register(refill);
             }
         }
 
         [HarmonyPatch(typeof(TimeOfDay), "DoEndOfDayAnalytics")]
         internal static class TimeOfDay_DoEndOfDayAnalytics
         {
-            internal static void Postfix(Container __instance)
+            internal static void Postfix(TimeOfDay __instance)
             {
                 RefillManager.NotifySubscribers();
             }
