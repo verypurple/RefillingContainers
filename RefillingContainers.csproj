@@ -67,6 +67,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) D:\Games\TheLongDark\Mods\$(TargetName).dev.dll</PostBuildEvent>
+    <PostBuildEvent>copy $(TargetPath) D:\Games\TheLongDark\Mods\$(TargetName).dll</PostBuildEvent>
   </PropertyGroup>
 </Project>

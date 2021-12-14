@@ -47,22 +47,30 @@ namespace RefillingContainers
 
         internal void DoRefill()
         {
-            if (!m_Container.IsInspected() || !m_Container.IsEmpty())
+            if (!(m_Container.IsInspected() && m_Container.IsEmpty()))
             {
+#if DEBUG
+                MelonLogger.Msg(ConsoleColor.DarkGray, "Unsearched or not empty");
+#endif
                 return;
             }
 
             var currentDay = GameManager.m_TimeOfDay.GetDayNumber();
+            var updateDay = m_DaySearched + Settings.options.refillAfterDays;
 
-            if (currentDay >= m_DaySearched + Settings.options.refillAfterDays)
+            if (currentDay >= updateDay)
             {
                 m_Container.m_LootTable = m_Container.m_LootTablePrefab;
                 m_Container.m_Inspected = false;
                 m_Container.m_GearToInstantiate.Clear();
 
-                int empty = rand.Next(0, 100);
-                if (empty < GetChanceEmptyModifier(m_Container.m_ChanceEmpty))
+                int roll = rand.Next(0, 100);
+                float chanceEmpty = GetModifiedChanceEmpty(m_Container.m_ChanceEmpty);
+                if (roll < chanceEmpty)
                 {
+#if DEBUG
+                    MelonLogger.Msg(ConsoleColor.DarkGray, "Bad luck, got {0} needed {1}", roll, chanceEmpty);
+#endif
                     return;
                 }
 
@@ -70,20 +78,32 @@ namespace RefillingContainers
                 float min = Mathf.Min(m_Container.m_MinRandomItems, max);
                 int count = rand.Next((int)Mathf.Round(min), (int)Mathf.Round(max) + 1);
 
+#if DEBUG
+                MelonLogger.Msg(ConsoleColor.DarkGray, "Filling with {0} item(s)", count);
+#endif
                 for (var i = 0; i < count; i++)
                 {
                     var prefab = m_Container.m_LootTablePrefab.GetRandomGearPrefab();
 
                     if (prefab)
                     {
+#if DEBUG
+                        MelonLogger.Msg(ConsoleColor.DarkGray, "Adding {0}", prefab.name);
+#endif
                         m_Container.m_GearToInstantiate.Add(prefab.name);
                     }
                 }
             }
+#if DEBUG
+            else
+            {
+                MelonLogger.Msg(ConsoleColor.DarkGray, "Too early. {0} ({1}->{2})", currentDay, m_DaySearched, updateDay);
+            }
+#endif
         }
 
         [HideFromIl2Cpp]
-        private float GetChanceEmptyModifier(float chanceEmpty)
+        private float GetModifiedChanceEmpty(float chanceEmpty)
         {
             var diff = 100f - chanceEmpty;
 

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using MelonLoader;
+using System;
+using System.Collections.Generic;
 
 namespace RefillingContainers
 {
@@ -11,7 +13,6 @@ namespace RefillingContainers
             if (refill.m_Container.m_LootTablePrefab)
             {
                 handlers.Add(refill);
-                refill.DoRefill();
             }
         }
 
@@ -29,6 +30,9 @@ namespace RefillingContainers
 
             foreach (var handler in handlers)
             {
+#if DEBUG
+                MelonLogger.Msg(ConsoleColor.DarkGray, "Checking {0}", handler.name);
+#endif
                 handler.DoRefill();
             }
         }

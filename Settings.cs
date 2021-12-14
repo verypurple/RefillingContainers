@@ -1,4 +1,6 @@
-﻿using ModSettings;
+﻿using System.Reflection;
+using MelonLoader;
+using ModSettings;
 using static CustomExperienceModeManager;
 
 namespace RefillingContainers
@@ -25,6 +27,17 @@ namespace RefillingContainers
         [Name("Container density modifier")]
         [Description("Modifies the amount of items you find in refilled containers.")]
         public CustomTunableLMH containerDensityModifier = CustomTunableLMH.High;
+
+        protected override void OnConfirm()
+        {
+            if (modEnabled)
+            {
+#if DEBUG
+                MelonLogger.Msg("Doing manual refill from settings");
+#endif
+                RefillManager.RefillAll();
+            }
+        }
     }
 
     internal class Settings
