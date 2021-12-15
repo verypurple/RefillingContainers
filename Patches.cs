@@ -56,9 +56,6 @@ namespace RefillingContainers
         {
             internal static void Postfix(Container __instance, string text, List<GearItem> loadedItems)
             {
-#if DEBUG
-                MelonLogger.Msg(ConsoleColor.DarkGray, "Deserializing {0}", __instance.name);
-#endif
                 var refill = __instance.GetComponent<Refill>();
 
                 var jo = JObject.Parse(text);
@@ -66,7 +63,11 @@ namespace RefillingContainers
                 if (jo.ContainsKey(nameof(Refill.m_DaySearched)))
                 {
                     refill.m_DaySearched = jo.GetValue(nameof(Refill.m_DaySearched)).ToObject<int>();
-                    refill.DoRefill();
+
+                    if (Settings.options.modEnabled)
+                    {
+                        refill.DoRefill();
+                    }
                 }
                 else if (__instance.IsInspected())
                 {

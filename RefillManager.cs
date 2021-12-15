@@ -30,9 +30,6 @@ namespace RefillingContainers
 
             foreach (var handler in handlers)
             {
-#if DEBUG
-                MelonLogger.Msg(ConsoleColor.DarkGray, "Checking {0}", handler.name);
-#endif
                 handler.DoRefill();
             }
         }

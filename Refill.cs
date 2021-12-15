@@ -47,6 +47,9 @@ namespace RefillingContainers
 
         internal void DoRefill()
         {
+#if DEBUG
+            MelonLogger.Msg(ConsoleColor.DarkGray, "Checking {0}", name);
+#endif
             if (!(m_Container.IsInspected() && m_Container.IsEmpty()))
             {
 #if DEBUG
