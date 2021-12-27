@@ -14,7 +14,7 @@ namespace RefillingContainers
             internal static void Postfix(Container __instance)
             {
 #if DEBUG
-                MelonLogger.Msg("Container GameObject Awake {0}", __instance.name);
+                MelonLogger.Msg("Container Awake {0}", __instance.name);
 #endif
                 __instance.gameObject.AddComponent<Refill>();
             }
@@ -58,9 +58,17 @@ namespace RefillingContainers
             internal static void Postfix(Container __instance, string text, List<GearItem> loadedItems)
             {
 #if DEBUG
-                MelonLogger.Msg("Container GameObject Deserialize {0}", __instance.name);
+                MelonLogger.Msg("Container Deserialize {0}", __instance.name);
 #endif
                 var refill = __instance.GetComponent<Refill>();
+
+                if (!refill)
+                {
+#if DEBUG
+                    MelonLogger.Msg("Refill Component was removed {0}", __instance.name);
+#endif
+                    return;
+                }
 
                 var jo = JObject.Parse(text);
 

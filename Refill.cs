@@ -24,13 +24,17 @@ namespace RefillingContainers
 #endif
             m_Container = GetComponent<Container>();
 
-            if (!m_Container)
+            if (m_Container)
             {
-                MelonLogger.Warning("Container component missing {0}", name);
-                return;
+                RefillManager.Register(this);
             }
-
-            RefillManager.Register(this);
+            else
+            {
+#if DEBUG
+                MelonLogger.Msg("Container Component missing {0}", name);
+#endif
+                Destroy(this);
+            }
         }
 
         void OnDestroy()
