@@ -19,6 +19,17 @@ namespace RefillingContainers
 
         void Start()
         {
+#if DEBUG
+            MelonLogger.Msg("Refill GameObject Start {0}", name);
+#endif
+            m_Container = GetComponent<Container>();
+
+            if (!m_Container)
+            {
+                MelonLogger.Warning("Container component missing {0}", name);
+                return;
+            }
+
             RefillManager.Register(this);
         }
 

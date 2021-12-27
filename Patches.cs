@@ -2,7 +2,6 @@
 using MelonLoader;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 
 namespace RefillingContainers
@@ -14,8 +13,10 @@ namespace RefillingContainers
         {
             internal static void Postfix(Container __instance)
             {
-                var refill = __instance.gameObject.AddComponent<Refill>();
-                refill.m_Container = __instance;
+#if DEBUG
+                MelonLogger.Msg("Container GameObject Awake {0}", __instance.name);
+#endif
+                __instance.gameObject.AddComponent<Refill>();
             }
         }
 
@@ -56,6 +57,9 @@ namespace RefillingContainers
         {
             internal static void Postfix(Container __instance, string text, List<GearItem> loadedItems)
             {
+#if DEBUG
+                MelonLogger.Msg("Container GameObject Deserialize {0}", __instance.name);
+#endif
                 var refill = __instance.GetComponent<Refill>();
 
                 var jo = JObject.Parse(text);
